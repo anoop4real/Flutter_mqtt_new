@@ -16,6 +16,7 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController _messageTextController = TextEditingController();
   final TextEditingController _topicTextController = TextEditingController();
+  final _controller = ScrollController();
 
   MQTTManager _manager;
 
@@ -23,15 +24,20 @@ class _MessageScreenState extends State<MessageScreen> {
   void dispose() {
     _messageTextController.dispose();
     _topicTextController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _manager = Provider.of<MQTTManager>(context, listen: false);
+    _manager = Provider.of<MQTTManager>(context);
+    if (_controller.hasClients) {
+      _controller.jumpTo(_controller.position.maxScrollExtent);
+    }
+
     return Scaffold(
         appBar: _buildAppBar(context),
-        body: _manager.myStream == null
+        body: _manager.currentState == null
             ? CircularProgressIndicator()
             : _buildColumn(_manager));
   }
@@ -57,22 +63,13 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Widget _buildColumn(MQTTManager manager) {
-    return StreamBuilder(
-      stream: manager.myStream,
-      builder: (BuildContext context, AsyncSnapshot<MQTTAppState> snapshot) {
-        if (snapshot.hasData) {
-          return Column(
-            children: <Widget>[
-              StatusBar(
-                  statusMessage: prepareStateMessageFrom(
-                      snapshot.data.getAppConnectionState)),
-              _buildEditableColumn(snapshot.data),
-            ],
-          );
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
+    return Column(
+      children: <Widget>[
+        StatusBar(
+            statusMessage: prepareStateMessageFrom(
+                manager.currentState.getAppConnectionState)),
+        _buildEditableColumn(manager.currentState),
+      ],
     );
   }
 
@@ -127,6 +124,9 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget _buildSendButtonFrom(MQTTAppConnectionState state) {
     return RaisedButton(
       color: Colors.green,
+      disabledColor: Colors.grey,
+      textColor: Colors.white,
+      disabledTextColor:Colors.black38 ,
       child: const Text('Send'),
       onPressed: state == MQTTAppConnectionState.connectedSubscribed
           ? () {
@@ -154,6 +154,9 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget _buildSubscribeButtonFrom(MQTTAppConnectionState state) {
     return RaisedButton(
       color: Colors.green,
+      disabledColor: Colors.grey,
+      textColor: Colors.white,
+      disabledTextColor:Colors.black38 ,
       child: state == MQTTAppConnectionState.connectedSubscribed
           ? const Text('Unsubscribe')
           : const Text('Subscribe'),
@@ -167,11 +170,17 @@ class _MessageScreenState extends State<MessageScreen> {
 
   Widget _buildScrollableTextWith(String text) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(5.0),
       child: Container(
+        padding:const EdgeInsets.only(left: 10.0, right: 5.0) ,
         width: 400,
-        height: 200,
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.black12,
+        ),
         child: SingleChildScrollView(
+          controller: _controller,
           child: Text(text),
         ),
       ),

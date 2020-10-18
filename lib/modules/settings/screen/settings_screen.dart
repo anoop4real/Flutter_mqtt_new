@@ -26,41 +26,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     _manager = Provider.of<MQTTManager>(context);
-    Timer(Duration(seconds: 1), () {
-      _manager.updateStream();
-    });
-
     return Scaffold(
         appBar: _buildAppBar(context),
-        body: _manager.controller.stream == null
+        body: _manager.currentState == null
             ? CircularProgressIndicator()
             : _buildColumn(_manager));
   }
 
   Widget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text('MQTT'),
+      title: const Text('Settings'),
       backgroundColor: Colors.greenAccent,
     );
   }
 
   Widget _buildColumn(MQTTManager manager) {
-    return StreamBuilder(
-      stream: manager.myStream,
-      builder: (BuildContext context, AsyncSnapshot<MQTTAppState> snapshot) {
-        if (snapshot.hasData) {
-          return Column(
-            children: <Widget>[
-              StatusBar(
-                  statusMessage: prepareStateMessageFrom(
-                      snapshot.data.getAppConnectionState)),
-              _buildEditableColumn(snapshot.data),
-            ],
-          );
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
+    return Column(
+      children: <Widget>[
+        StatusBar(
+            statusMessage: prepareStateMessageFrom(
+                manager.currentState.getAppConnectionState)),
+        _buildEditableColumn(manager.currentState),
+      ],
     );
   }
 
@@ -69,7 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.all(20.0),
       child: Column(
         children: <Widget>[
-          _buildTextFieldWith(_hostTextController,'Enter broker address',
+          _buildTextFieldWith(_hostTextController, 'Enter broker address',
               currentAppState.getAppConnectionState),
           const SizedBox(height: 10),
           _buildConnecteButtonFrom(currentAppState.getAppConnectionState)

@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fluttermqttnew/modules/core/models/MQTTAppState.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import '../models/MQTTAppState.dart';
 
-class MQTTManager{
+class MQTTManager extends ChangeNotifier{
 
   // Private instance of client
   MQTTAppState _currentState = MQTTAppState();
@@ -13,14 +13,7 @@ class MQTTManager{
   String _identifier;
   String _host;
   String _topic = "";
-  StreamController<MQTTAppState> controller = StreamController<MQTTAppState>.broadcast();
 
-  MQTTManager() {
-    Timer(Duration(seconds: 3), () {
-      updateStream();
-    });
-
-  }
   void initializeMQTTClient({
     @required String host,
     @required String identifier,
@@ -51,10 +44,10 @@ class MQTTManager{
 
   }
 
-  Stream<MQTTAppState> get myStream =>
-      controller.stream.asBroadcastStream();
   String get host =>
       _host;
+  MQTTAppState get currentState =>
+      _currentState;
   // Connect to the host
   void connect() async{
     assert(_client != null);
@@ -150,6 +143,7 @@ class MQTTManager{
   }
 
   void updateStream() {
-    controller.add(_currentState);
+    //controller.add(_currentState);
+    notifyListeners();
   }
 }
