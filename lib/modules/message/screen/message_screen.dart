@@ -108,7 +108,7 @@ class _MessageScreenState extends State<MessageScreen> {
         state == MQTTAppConnectionState.connectedSubscribed) {
       shouldEnable = true;
     } else if ((controller == _topicTextController &&
-        state == MQTTAppConnectionState.connected)) {
+        (state == MQTTAppConnectionState.connected || state == MQTTAppConnectionState.connectedUnSubscribed) )) {
       shouldEnable = true;
     }
     return TextField(
