@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttermqttnew/modules/core/managers/MQTTManager.dart';
 import 'package:fluttermqttnew/modules/core/models/MQTTAppState.dart';
 import 'package:fluttermqttnew/modules/core/widgets/status_bar.dart';
+import 'package:fluttermqttnew/modules/helpers/custom_route.dart';
 import 'package:fluttermqttnew/modules/helpers/screen_route.dart';
 import 'package:fluttermqttnew/modules/helpers/status_info_message_utils.dart';
+import 'package:fluttermqttnew/modules/settings/screen/settings_screen.dart';
 import 'package:provider/provider.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -51,7 +53,7 @@ class _MessageScreenState extends State<MessageScreen> {
             padding: const EdgeInsets.only(right: 15.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed(SETTINGS_ROUTE);
+                Navigator.of(context).push(CustomRoute(builder: (context) => SettingsScreen(),));
               },
               child: Icon(
                 Icons.settings,
