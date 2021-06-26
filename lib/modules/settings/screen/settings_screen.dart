@@ -15,7 +15,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController _hostTextController = TextEditingController();
-  MQTTManager _manager;
+  late MQTTManager _manager;
 
   @override
   void dispose() {
@@ -27,7 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     _manager = Provider.of<MQTTManager>(context);
     return Scaffold(
-        appBar: _buildAppBar(context),
+        appBar: _buildAppBar(context) as PreferredSizeWidget?,
         body: _manager.currentState == null
             ? CircularProgressIndicator()
             : _buildColumn(_manager));
@@ -72,7 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         state == MQTTAppConnectionState.disconnected)) {
       shouldEnable = true;
     } else if (controller == _hostTextController && _manager.host != null) {
-      _hostTextController.text = _manager.host;
+      _hostTextController.text = _manager.host!;
     }
     return TextField(
         enabled: shouldEnable,

@@ -18,7 +18,7 @@ class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController _topicTextController = TextEditingController();
   final _controller = ScrollController();
 
-  MQTTManager _manager;
+  late MQTTManager _manager;
 
   @override
   void dispose() {
@@ -36,7 +36,7 @@ class _MessageScreenState extends State<MessageScreen> {
     }
 
     return Scaffold(
-        appBar: _buildAppBar(context),
+        appBar: _buildAppBar(context) as PreferredSizeWidget?,
         body: _manager.currentState == null
             ? CircularProgressIndicator()
             : _buildColumn(_manager));
