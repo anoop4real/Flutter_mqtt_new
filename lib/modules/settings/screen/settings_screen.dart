@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -88,8 +87,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Row(
       children: <Widget>[
         Expanded(
-          child: RaisedButton(
-            color: Colors.lightBlueAccent,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightBlueAccent),
             child: const Text('Connect'),
             onPressed: state == MQTTAppConnectionState.disconnected
                 ? _configureAndConnect
@@ -98,8 +98,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: RaisedButton(
-            color: Colors.redAccent,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             child: const Text('Disconnect'),
             onPressed: state != MQTTAppConnectionState.disconnected
                 ? _disconnect
